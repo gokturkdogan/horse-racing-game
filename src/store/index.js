@@ -16,9 +16,7 @@ const store = createStore({
     }
   },
   getters: {
-    getNotify(state) {
-      return state.notify
-    }
+    getNotify: (state) => state.notify
   },
   modules: {
     horses: horses,

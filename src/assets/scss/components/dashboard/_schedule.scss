@@ -1,0 +1,39 @@
+@use '../../variables/colors' as *;
+@use '../../variables/font' as *;
+
+.schedule {
+    flex: 1;
+    background-color: $white;
+  
+    &__header {
+      text-align: center;
+      font-size: $medium;
+      padding: 30px 20px;
+      color: $white;
+      background-color: $grey;
+      font-weight: $semi-bold;
+    }
+  
+    &__body {
+      max-height: calc(100vh - 350px);
+      overflow-y: scroll;
+    }
+  
+    &__heading {
+      background-color: $green;
+      text-align: center;
+      color: $white;
+      padding: 10px;
+      font-weight: $medium;
+    }
+  
+    &__content {
+      font-size: $small;
+      padding: 10px;
+  
+      &:hover {
+        color: $white;
+        background-color: $green;
+      }
+    }
+  }

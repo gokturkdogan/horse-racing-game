@@ -12,7 +12,8 @@ const horses = {
             '6TH Lap - 2200m'
         ],
         distances: [1200, 1400, 1600, 1800, 2000, 2200],
-        activeRound: 1
+        activeRound: 1,
+        scheduleReady: false
     }),
     mutations: {
         SET_SELECTED_HORSES(state, payload) {
@@ -26,6 +27,9 @@ const horses = {
         },
         SET_PROGRAM_READY(state, payload) {
             state.programReady = payload;
+        },
+        SET_SCHEDULE_READY(state, payload) {
+            state.scheduleReady = payload;
         }
     },
     actions: {
@@ -49,7 +53,7 @@ const horses = {
                 })
             );
             await commit('SET_RACES', updatedRaces);
-            commit('SET_PROGRAM_READY', true);
+            commit('SET_SCHEDULE_READY', true);
         },
         setRaceOrder({ state, commit }, leaderboard) {
             const activeRoundIndex = state.activeRound - 1;
@@ -65,7 +69,7 @@ const horses = {
         getSelectedHorses: (state) => state.selectedHorses,
         getRaces: (state) => state.races,
         getActiveRound: (state) => state.activeRound,
-        getProgramReady: (state) => state.programReady
+        getScheduleReady: (state) => state.scheduleReady
     },
     namespaced: true
 };

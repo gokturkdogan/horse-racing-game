@@ -24,18 +24,18 @@ export default {
   padding: 20px 100px;
 
   &.success {
-    color: green;
-    border-left: 10px solid green;
+    color: $green;
+    border-left: 10px solid $green;
   }
 
   &.error {
-    color: red;
-    border-left: 10px solid red;
+    color: $red;
+    border-left: 10px solid $red;
   }
 
   &.warning {
-    color: orange;
-    border-left: 10px solid orange;
+    color: $orange;
+    border-left: 10px solid $orange;
   }
 }
 </style>

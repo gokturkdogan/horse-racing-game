@@ -34,6 +34,7 @@ export default {
   &__title {
     font-size: $x-large;
     letter-spacing: 1px;
+    font-weight: $semi-bold;
   }
 
   &__acitons {
@@ -44,18 +45,18 @@ export default {
   &__button {
     color: $white;
     padding: 10px 20px;
-    background-color: orange;
+    background-color: $orange;
     border-radius: 10px;
     transition: 0.5s;
     font-size: $large;
 
     &:hover {
-      background-color: red;
+      background-color: $red;
     }
 
     &.-start {
       margin-left: 25px;
-      background-color: green;
+      background-color: $green;
     }
   }
 }
