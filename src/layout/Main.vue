@@ -1,11 +1,12 @@
 <template>
-  <div>
-    <router-view></router-view>
+  <div class="layout">
+    <slot></slot>
   </div>
 </template>
-
+  
 <script>
 export default {
-  name: "App",
+  name: "MainLayout",
 };
 </script>
+  
