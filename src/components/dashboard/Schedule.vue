@@ -30,7 +30,7 @@ export default {
 };
 </script>
   
-  <style lang="scss" scoped>
+<style lang="scss" scoped>
 .schedule {
   flex: 1;
   background-color: $white;
