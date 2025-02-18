@@ -1,10 +1,8 @@
 <template>
   <div class="race">
-    <div class="race__acitons">
-      <button class="race__button" @click="start">
-        Start Round {{ activeRound }}
-      </button>
-      <button class="race__button -next" @click="next">next</button>
+    <div v-if="scheduleReady" class="race__acitons">
+      <button class="race__button" @click="start"> Start Round {{ activeRound }}</button>
+      <button class="race__button -next" @click="next">Next Round</button>
     </div>
     <div v-for="(horse, index) in roundHorses" :key="index" class="race__line">
       <div
@@ -42,6 +40,9 @@ export default {
     activeRound() {
       return this.$store.getters["race/getActiveRound"];
     },
+    scheduleReady() {
+      return this.$store.getters["race/getScheduleReady"];
+    }
   },
   methods: {
     async start() {
@@ -62,7 +63,7 @@ export default {
     },
     setRaceOrder() {
       this.$store.dispatch("race/setRaceOrder", this.raceOrder);
-      this.$store.commit('SET_NOTIFY', { message: 'Yarış Tamamlandı', isShow: true, type: 'success'});
+      this.$store.commit('SET_NOTIFY', { message: `${this.activeRound}. Round Tamamlandı`, isShow: true, type: 'success'});
     },
     getHorseSpeed(horse) {
       const condition = horse.condition;
@@ -84,7 +85,7 @@ export default {
 
 <style lang="scss" scoped>
 .race {
-  border-right: 3px solid red;
+  border-right: 3px solid $red;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -95,19 +96,19 @@ export default {
   }
 
   &__button {
-    background-color: green;
+    background-color: $green;
     padding: 10px 20px;
     border-radius: 15px;
     color: $white;
 
     &.-next {
-      background-color: red;
+      background-color: $red;
       margin-left: 10px;
     }
   }
 
   &__line {
-    border-bottom: 2px dotted black;
+    border-bottom: 2px dotted $black;
     display: flex;
     align-items: center;
     justify-content: flex-start;

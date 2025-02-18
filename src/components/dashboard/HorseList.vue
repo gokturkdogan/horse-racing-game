@@ -11,7 +11,7 @@
         <span class="list__text">{{ horse.name }}</span>
         <span class="list__text">{{ horse.condition }}</span>
         <span class="list__text">
-          <HorseIcon width="40" :fill="horse.color"/>
+          <HorseIcon width="40" :fill="horse.color" />
         </span>
       </div>
     </div>
@@ -44,7 +44,7 @@ export default {
     font-size: $medium;
     padding: 30px 20px;
     color: $white;
-    background-color: rgb(73, 73, 73);
+    background-color: $grey;
   }
 
   &__body {
@@ -57,7 +57,7 @@ export default {
     align-items: center;
     justify-content: space-between;
     padding: 20px;
-    background-color: rgb(158, 158, 158);
+    background-color: $grey-100;
   }
 
   &__item {
@@ -67,7 +67,7 @@ export default {
     font-size: $small;
 
     &:hover {
-      background-color: rgb(158, 158, 158);
+      background-color: $grey-100;
     }
   }
 
