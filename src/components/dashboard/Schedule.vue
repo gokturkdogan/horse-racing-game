@@ -7,14 +7,19 @@
           {{ race.title }}
         </div>
         <div class="schedule__content" v-for="(horse, index) in race.horses" :key="index">
-          {{ horse.name }}
+          <span class="schedule__name">
+            {{ horse.name }}
+          </span>
+          <span class="schedule__name">
+            <HorseIcon width="25" :fill="horse.color"/>
+          </span>
         </div>
       </div>
     </div>
   </div>
 </template>
       
-  <script>
+<script>
 import HorseIcon from "../../assets/icons/horse.svg";
 export default {
   name: "HorseList",

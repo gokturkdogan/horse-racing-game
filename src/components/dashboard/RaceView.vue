@@ -1,10 +1,13 @@
 <template>
   <div class="race">
     <div v-if="scheduleReady" class="race__acitons">
-      <button class="race__button" @click="start"> Start Round {{ activeRound }}</button>
+      <button class="race__button" @click="start">
+        Start Round {{ activeRound }}
+      </button>
       <button class="race__button -next" @click="next">Next Round</button>
     </div>
     <div v-for="(horse, index) in roundHorses" :key="index" class="race__line">
+      <span class="race__number">{{ index + 1 }}</span>
       <div
         class="race__horse"
         :class="{ '-moved': isMoved, '-finished': raceFinished }"
@@ -23,10 +26,11 @@ import HorseIcon from "../../assets/icons/horse-race.svg";
 export default {
   data() {
     return {
-      isMoved: false,
+      isMoved: false, // Başlangıçta atların hareket etmesi engelleniyor
       finishedHorses: 0,
       raceFinished: false,
       raceOrder: [],
+      raceWidth: 0, // Tarayıcı genişliği
     };
   },
   components: {
@@ -42,18 +46,46 @@ export default {
     },
     scheduleReady() {
       return this.$store.getters["race/getScheduleReady"];
-    }
+    },
+  },
+  mounted() {
+    this.getRaceWidth();
+    window.addEventListener("resize", this.getRaceWidth);
+  },
+  beforeDestroy() {
+    window.removeEventListener("resize", this.getRaceWidth);
   },
   methods: {
-    async start() {
+    getRaceWidth() {
+      const raceElement = document.querySelector(".race");
+      if (raceElement) {
+        this.raceWidth = raceElement.offsetWidth;
+      }
+    },
+    start() {
       this.raceFinished = false;
       this.isMoved = true;
       this.finishedHorses = 0;
       this.raceOrder = [];
     },
+    getHorseSpeed(horse) {
+      const condition = horse.condition;
+      const minSpeed = 1;
+      const maxSpeed = 3;
+      const speed = (maxSpeed - minSpeed) * (condition / 100) + minSpeed;
+      const moveDistance = (this.raceWidth / 100) * 90;
+      const transformValue = this.isMoved
+        ? `translateX(${moveDistance}px)`
+        : `translateX(0)`;
+
+      return {
+        transitionDuration: `${speed}s`,
+        transform: transformValue,
+      };
+    },
     onTransitionEnd(horse, index) {
       if (!this.raceFinished) {
-        this.raceOrder.push({ horse, index });
+        this.raceOrder.push({ name: horse.name, color: horse.color, index });
       }
       this.finishedHorses++;
       if (this.finishedHorses === this.roundHorses.length) {
@@ -63,21 +95,17 @@ export default {
     },
     setRaceOrder() {
       this.$store.dispatch("race/setRaceOrder", this.raceOrder);
-      this.$store.commit('SET_NOTIFY', { message: `${this.activeRound}. Round Tamamlandı`, isShow: true, type: 'success'});
-    },
-    getHorseSpeed(horse) {
-      const condition = horse.condition;
-      const minSpeed = 1;
-      const maxSpeed = 3;
-      const speed = (maxSpeed - minSpeed) * (condition / 100) + minSpeed;
-      return {
-        transitionDuration: `${speed}s`,
-      };
+      console.log(this.raceOrder);
+      this.$store.commit("SET_NOTIFY", {
+        message: `${this.activeRound}. Round Tamamlandı`,
+        isShow: true,
+        type: "success",
+      });
     },
     async next() {
       this.isMoved = false;
       await this.$store.commit("race/SET_ACTIVE_ROUND", this.activeRound + 1);
-      this.$store.commit('SET_NOTIFY', { isShow: false });
+      this.$store.commit("SET_NOTIFY", { isShow: false });
     },
   },
 };
@@ -114,8 +142,17 @@ export default {
     justify-content: flex-start;
   }
 
+  &__number {
+    background-color: $green;
+    color: $white;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   &__horse {
-    position: relative;
     transition: transform ease;
 
     &.-moved {
