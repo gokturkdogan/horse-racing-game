@@ -72,7 +72,7 @@ export default {
       const condition = horse.condition;
       const minSpeed = 1;
       const maxSpeed = 3;
-      const speed = (maxSpeed - minSpeed) * (condition / 100) + minSpeed;
+      const speed = (maxSpeed - minSpeed) * (1 - condition / 100) + minSpeed;
       const moveDistance = (this.raceWidth / 100) * 90;
       const transformValue = this.isMoved
         ? `translateX(${moveDistance}px)`
