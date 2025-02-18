@@ -3,7 +3,7 @@
     <div class="header__title">Horse Racing</div>
     <div class="header__actions">
       <button @click="generate()" class="header__button">Generate Program</button>
-      <button @click="clear()" class="header__button -start">Start / Pause</button>
+      <button @click="start()" class="header__button -start">Start / Pause</button>
     </div>
   </div>
 </template>
@@ -15,8 +15,8 @@ export default {
     generate() {
       this.$store.dispatch('race/generateSchedule');
     },
-    clear() {
-      this.$store.dispatch('race/clearSchedule');
+    start() {
+      this.$store.dispatch('race/startRace');
     }
   }
 };
