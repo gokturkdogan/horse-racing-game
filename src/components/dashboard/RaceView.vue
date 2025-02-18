@@ -26,11 +26,11 @@ import HorseIcon from "../../assets/icons/horse-race.svg";
 export default {
   data() {
     return {
-      isMoved: false, // Başlangıçta atların hareket etmesi engelleniyor
+      isMoved: false,
       finishedHorses: 0,
       raceFinished: false,
       raceOrder: [],
-      raceWidth: 0, // Tarayıcı genişliği
+      raceWidth: 0,
     };
   },
   components: {
