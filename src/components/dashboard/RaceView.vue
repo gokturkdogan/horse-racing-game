@@ -47,6 +47,11 @@ export default {
     scheduleReady() {
       return this.$store.getters["race/getScheduleReady"];
     },
+    isRaceCompleted() {
+      const races = this.$store.getters["race/getRaces"];
+      const activeRace = races?.[this.activeRound - 1];
+      return activeRace?.leaderboard && activeRace.leaderboard.length > 0;
+    },
   },
   mounted() {
     this.getRaceWidth();
@@ -95,14 +100,17 @@ export default {
     },
     setRaceOrder() {
       this.$store.dispatch("race/setRaceOrder", this.raceOrder);
-      console.log(this.raceOrder);
       this.$store.commit("SET_NOTIFY", {
-        message: `${this.activeRound}. Round Tamamlandı`,
+        message: `Round ${this.activeRound} Completed`,
         isShow: true,
         type: "success",
       });
     },
     async next() {
+      if(!this.isRaceCompleted) {
+        this.$store.commit("SET_NOTIFY", { message: 'Please Complete Active Round', isShow: true, type: 'error' });
+        return;
+      }
       this.isMoved = false;
       await this.$store.commit("race/SET_ACTIVE_ROUND", this.activeRound + 1);
       this.$store.commit("SET_NOTIFY", { isShow: false });

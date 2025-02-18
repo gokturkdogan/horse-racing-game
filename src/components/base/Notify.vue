@@ -12,6 +12,15 @@ export default {
       return this.$store.getters["getNotify"];
     },
   },
+  watch: {
+    "notify.isShow"(newVal) {
+      if (newVal) {
+        setTimeout(() => {
+          this.$store.commit("SET_NOTIFY", { isShow: false });
+        }, 2000);
+      }
+    },
+  },
 };
 </script>
   
