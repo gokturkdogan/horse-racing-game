@@ -45,20 +45,24 @@ export default {
   },
   methods: {
     async start() {
+      this.raceFinished = false;
       this.isMoved = true;
       this.finishedHorses = 0;
       this.raceOrder = [];
     },
     onTransitionEnd(horse, index) {
-      this.raceOrder.push({ horse, index });
+      if (!this.raceFinished) {
+        this.raceOrder.push({ horse, index });
+      }
       this.finishedHorses++;
       if (this.finishedHorses === this.roundHorses.length) {
-        //this.raceFinished = true;
+        this.raceFinished = true;
         this.setRaceOrder();
       }
     },
     setRaceOrder() {
       this.$store.dispatch("race/setRaceOrder", this.raceOrder);
+      this.$store.commit('SET_NOTIFY', { message: 'Yarış Tamamlandı', isShow: true, type: 'success'});
     },
     getHorseSpeed(horse) {
       const condition = horse.condition;
@@ -71,7 +75,8 @@ export default {
     },
     async next() {
       this.isMoved = false;
-      await this.$store.commit('race/SET_ACTIVE_ROUND', this.activeRound + 1);
+      await this.$store.commit("race/SET_ACTIVE_ROUND", this.activeRound + 1);
+      this.$store.commit('SET_NOTIFY', { isShow: false });
     },
   },
 };

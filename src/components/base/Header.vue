@@ -3,7 +3,6 @@
     <div class="header__title">Horse Racing</div>
     <div class="header__actions">
       <button @click="generate()" class="header__button">Generate Program</button>
-      <button @click="start()" class="header__button -start">Start / Pause</button>
     </div>
   </div>
 </template>
