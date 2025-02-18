@@ -10,9 +10,9 @@
       <div v-for="(horse, index) in horses" :key="index" class="list__item">
         <span class="list__text">{{ horse.name }}</span>
         <span class="list__text">{{ horse.condition }}</span>
-        <span class="list__text"
-          ><HorseIcon width="40" :fill="horse.color"
-        /></span>
+        <span class="list__text">
+          <HorseIcon width="40" :fill="horse.color"/>
+        </span>
       </div>
     </div>
   </div>

@@ -2,7 +2,7 @@
   <div class="header">
     <div class="header__title">Horse Racing</div>
     <div class="header__actions">
-      <button class="header__button">Generate Program</button>
+      <button @click="generate()" class="header__button">Generate Program</button>
       <button class="header__button -start">Start / Pause</button>
     </div>
   </div>
@@ -11,6 +11,11 @@
 <script>
 export default {
   name: "Header",
+  methods: {
+    generate() {
+      this.$store.dispatch('race/selectHorses');
+    }
+  }
 };
 </script>
 
