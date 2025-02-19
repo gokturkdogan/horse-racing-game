@@ -40,6 +40,7 @@ export default {
   mixins: [helpers],
   methods: {
     openStats(horse) {
+      this.scrollToTop();
       this.toggleScroll();
       this.$store.commit('race/SET_STATS_MODAL', { isShow: true, horse: horse });
     },
