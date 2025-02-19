@@ -2,7 +2,9 @@
   <div class="header">
     <div class="header__title">Horse Racing</div>
     <div class="header__actions">
-      <button @click="generate()" class="header__button">Generate Program</button>
+      <button @click="generate()" class="header__button">
+        Generate Program
+      </button>
     </div>
   </div>
 </template>
@@ -11,13 +13,10 @@
 export default {
   name: "Header",
   methods: {
-    generate() {
-      this.$store.dispatch('race/generateSchedule');
-    },
-    start() {
-      this.$store.dispatch('race/startRace');
+    async generate() {
+      this.$store.dispatch("race/generateSchedule");
     }
-  }
+  },
 };
 </script>
 
@@ -31,10 +30,18 @@ export default {
   box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px,
     rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
 
+  @include medium() {
+    padding: 10px;
+  }
+
   &__title {
     font-size: $x-large;
     letter-spacing: 1px;
     font-weight: $semi-bold;
+
+    @include medium() {
+      font-size: $large;
+    }
   }
 
   &__acitons {
@@ -49,6 +56,10 @@ export default {
     border-radius: 10px;
     transition: 0.5s;
     font-size: $large;
+
+    @include medium() {
+      font-size: $small;
+    }
 
     &:hover {
       background-color: $red;

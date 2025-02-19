@@ -1,6 +1,6 @@
 <template>
   <div class="race">
-    <div v-if="scheduleReady" class="race__acitons">
+    <div v-if="scheduleReady" class="race__actions">
       <button class="race__button" @click="start">
         Start Round {{ activeRound }}
       </button>
@@ -10,8 +10,8 @@
       <span class="race__number">{{ index + 1 }}</span>
       <div
         class="race__horse"
-        :class="{ '-moved': isMoved, '-finished': raceFinished }"
-        :style="getHorseSpeed(horse)"
+        :class="{ '-moved': isMoved, '-finished': !roundInProccess }"
+        :style="getPosition(horse)"
         @transitionend="onTransitionEnd(horse, index)"
       >
         <HorseIcon width="40" :fill="horse.color" />
@@ -26,9 +26,7 @@ import HorseIcon from "../../assets/icons/horse-race.svg";
 export default {
   data() {
     return {
-      isMoved: false,
       finishedHorses: 0,
-      raceFinished: false,
       raceOrder: [],
       raceWidth: 0,
     };
@@ -47,10 +45,14 @@ export default {
     scheduleReady() {
       return this.$store.getters["race/getScheduleReady"];
     },
-    isRaceCompleted() {
-      const races = this.$store.getters["race/getRaces"];
-      const activeRace = races?.[this.activeRound - 1];
-      return activeRace?.leaderboard && activeRace.leaderboard.length > 0;
+    isMoved() {
+      return this.$store.getters["race/getIsHorsesMoved"];
+    },
+    roundInProccess() {
+      return this.$store.getters["race/getRoundInProccess"];
+    },
+    activeRoundDistance() {
+      return this.$store.getters["race/getActiveRoundDistance"];
     },
   },
   mounted() {
@@ -67,53 +69,52 @@ export default {
         this.raceWidth = raceElement.offsetWidth;
       }
     },
-    start() {
-      this.raceFinished = false;
-      this.isMoved = true;
+    async start() {
+      const result = await this.$store.dispatch("race/startRound");
+      if (result === false) return;
+      this.resetRoundData();
+    },
+    resetRoundData() {
       this.finishedHorses = 0;
       this.raceOrder = [];
     },
-    getHorseSpeed(horse) {
-      const condition = horse.condition;
-      const minSpeed = 1;
-      const maxSpeed = 3;
-      const speed = (maxSpeed - minSpeed) * (1 - condition / 100) + minSpeed;
-      const moveDistance = (this.raceWidth / 100) * 90;
+    getPosition(horse) {
+      const { condition } = horse;
+      const time = this.calculateFinishTime(condition);
       const transformValue = this.isMoved
-        ? `translateX(${moveDistance}px)`
+        ? `translateX(${(this.raceWidth / 100) * 90}px)`
         : `translateX(0)`;
-
       return {
-        transitionDuration: `${speed}s`,
+        transitionDuration: `${time}s`,
         transform: transformValue,
       };
     },
+    calculateFinishTime(condition) {
+      const minSpeed = 1;
+      const maxSpeed = 3;
+      const adjustedSpeed = (maxSpeed - minSpeed) * (1 - condition / 100) + minSpeed;
+      const distanceImpact = this.activeRoundDistance;
+      const finalSpeed = adjustedSpeed * (1 + distanceImpact / 1000);
+      return finalSpeed / 0.7;
+    },
     onTransitionEnd(horse, index) {
-      if (!this.raceFinished) {
-        this.raceOrder.push({ name: horse.name, color: horse.color, index });
+      if (this.roundInProccess) {
+        const finishTime = this.calculateFinishTime(horse.condition);
+        this.raceOrder.push({
+          name: horse.name,
+          color: horse.color,
+          condition: horse.condition,
+          index,
+          finishTime,
+        });
       }
       this.finishedHorses++;
       if (this.finishedHorses === this.roundHorses.length) {
-        this.raceFinished = true;
-        this.setRaceOrder();
+        this.$store.dispatch("race/finishRound", this.raceOrder);
       }
     },
-    setRaceOrder() {
-      this.$store.dispatch("race/setRaceOrder", this.raceOrder);
-      this.$store.commit("SET_NOTIFY", {
-        message: `Round ${this.activeRound} Completed`,
-        isShow: true,
-        type: "success",
-      });
-    },
-    async next() {
-      if(!this.isRaceCompleted) {
-        this.$store.commit("SET_NOTIFY", { message: 'Please Complete Active Round', isShow: true, type: 'error' });
-        return;
-      }
-      this.isMoved = false;
-      await this.$store.commit("race/SET_ACTIVE_ROUND", this.activeRound + 1);
-      this.$store.commit("SET_NOTIFY", { isShow: false });
+    next() {
+      this.$store.dispatch("race/nextRound");
     },
   },
 };
@@ -126,7 +127,7 @@ export default {
   flex-direction: column;
   justify-content: space-between;
 
-  &__acitons {
+  &__actions {
     display: flex;
     justify-content: center;
   }

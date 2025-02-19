@@ -1,6 +1,5 @@
 const horses = {
     state: () => ({
-        programReady: false,
         selectedHorses: [],
         races: [],
         titles: [
@@ -13,7 +12,14 @@ const horses = {
         ],
         distances: [1200, 1400, 1600, 1800, 2000, 2200],
         activeRound: 1,
-        scheduleReady: false
+        scheduleReady: false,
+        isHorsesMoved: false,
+        isActiveRoundFinished: false,
+        roundInProccess: false,
+        statsModal: {
+            isShow: false,
+            horse: {}
+        }
     }),
     mutations: {
         SET_SELECTED_HORSES(state, payload) {
@@ -25,11 +31,20 @@ const horses = {
         SET_ACTIVE_ROUND(state, payload) {
             state.activeRound = payload;
         },
-        SET_PROGRAM_READY(state, payload) {
-            state.programReady = payload;
-        },
         SET_SCHEDULE_READY(state, payload) {
             state.scheduleReady = payload;
+        },
+        SET_IS_MOVED(state, payload) {
+            state.isHorsesMoved = payload;
+        },
+        SET_ROUND_IN_PROCCESS(state, payload) {
+            state.roundInProccess = payload;
+        },
+        SET_STATS_MODAL(state, payload) {
+            state.statsModal = {
+                ...state.statsModal,
+                ...payload
+            }
         }
     },
     actions: {
@@ -39,11 +54,18 @@ const horses = {
             return [...horses].sort(() => Math.random() - 0.5).slice(0, 10);
         },
         async generateSchedule({ state, commit, dispatch }) {
+            if (state.roundInProccess) {
+                commit("SET_NOTIFY", { message: "Please Wait", isShow: true, type: "warning" }, {root: true});
+                return false;
+            }
+            await commit('SET_IS_MOVED', false);
+            await commit("SET_ACTIVE_ROUND", 1);
             const races = state.titles.map((title, index) => {
                 return {
                     title,
                     distance: state.distances[index],
-                    horses: dispatch('selectHorses')
+                    horses: dispatch('selectHorses'),
+                    completed: false
                 };
             });
             const updatedRaces = await Promise.all(
@@ -55,21 +77,54 @@ const horses = {
             await commit('SET_RACES', updatedRaces);
             commit('SET_SCHEDULE_READY', true);
         },
-        setRaceOrder({ state, commit }, leaderboard) {
+        startRound({ commit, state }) {
+            let activeIndex = state.activeRound - 1;
+            if (state.races[activeIndex]?.completed) {
+                commit("SET_NOTIFY", { message: "Please Next Round", isShow: true, type: "warning" }, {root: true});
+                return false;
+            }
+            if (state.roundInProccess) {
+                commit("SET_NOTIFY", { message: "Please Wait", isShow: true, type: "warning" }, {root: true});
+                return false;
+            }
+            commit('SET_IS_MOVED', true);
+            commit('SET_ROUND_IN_PROCCESS', true);
+            return true;
+        },
+        async finishRound({ state, commit }, leaderboard) {
             const activeRoundIndex = state.activeRound - 1;
             const updatedRaces = [...state.races];
             updatedRaces[activeRoundIndex] = {
                 ...updatedRaces[activeRoundIndex],
-                leaderboard: leaderboard
+                leaderboard: leaderboard,
+                completed: true
             };
-            commit('SET_RACES', updatedRaces);
+            await commit('SET_RACES', updatedRaces);
+            commit("SET_NOTIFY", { message: `Round ${state.activeRound} Completed`, isShow: true, type: "success" }, {root: true});
+            commit('SET_ROUND_IN_PROCCESS', false);
+        },
+        async nextRound({ commit, state }) {
+            let activeIndex = state.activeRound - 1;
+            if (!state.races[activeIndex]?.completed) {
+                commit("SET_NOTIFY", { message: `Please Complete Round ${state.activeRound}`, isShow: true, type: "warning" }, {root: true});
+                return;
+            }
+            commit('SET_IS_MOVED', false);
+            commit('SET_ACTIVE_ROUND', state.activeRound + 1);
         }
     },
     getters: {
         getSelectedHorses: (state) => state.selectedHorses,
         getRaces: (state) => state.races,
         getActiveRound: (state) => state.activeRound,
-        getScheduleReady: (state) => state.scheduleReady
+        getScheduleReady: (state) => state.scheduleReady,
+        getIsHorsesMoved: (state) => state.isHorsesMoved,
+        getRoundInProccess: (state) => state.roundInProccess,
+        getActiveRoundDistance: (state) => {
+            const activeRoundIndex = state.activeRound - 1;
+            return state.races[activeRoundIndex]?.distance
+        },
+        getStatsModal: (state) => state.statsModal,
     },
     namespaced: true
 };

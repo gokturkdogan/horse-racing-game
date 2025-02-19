@@ -6,7 +6,7 @@
         <div v-if="race.leaderboard" class="schedule__heading">
           {{ race.title }}
         </div>
-        <div class="schedule__content" v-for="(horse, index) in race.leaderboard" :key="index">
+        <div @click="openStats(horse)" class="schedule__content -result" v-for="(horse, index) in race.leaderboard" :key="index">
           <span class="schedule__name"> # {{ index + 1 }} </span>
           <span class="schedule__name">
             {{ horse.name }}
@@ -17,15 +17,19 @@
         </div>
       </div>
     </div>
+    <StatsModal @close-modal="closeStats"/>
   </div>
 </template>
         
 <script>
 import HorseIcon from "../../assets/icons/horse.svg";
+import StatsModal from "./StatsModal.vue";
+import helpers from "../../mixins/helpers";
 export default {
   name: "HorseList",
   components: {
     HorseIcon,
+    StatsModal
   },
   props: {
     races: {
@@ -33,6 +37,17 @@ export default {
       required: true,
     },
   },
+  mixins: [helpers],
+  methods: {
+    openStats(horse) {
+      this.toggleScroll();
+      this.$store.commit('race/SET_STATS_MODAL', { isShow: true, horse: horse });
+    },
+    closeStats() {
+      this.toggleScroll(false);
+      this.$store.commit('race/SET_STATS_MODAL', { isShow: false, horse: null });
+    }
+  }
 };
 </script>
         

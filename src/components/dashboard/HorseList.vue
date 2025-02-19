@@ -45,6 +45,10 @@ export default {
     padding: 30px 20px;
     color: $white;
     background-color: $grey;
+
+    @include medium() {
+      padding: 15px;
+    }
   }
 
   &__body {

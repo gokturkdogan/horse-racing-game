@@ -1,5 +1,6 @@
 @use '../../variables/colors' as *;
 @use '../../variables/font' as *;
+@use '../../mixins/media-queries' as *;
 
 .schedule {
     flex: 1;
@@ -12,11 +13,19 @@
       color: $white;
       background-color: $grey;
       font-weight: $semi-bold;
+
+      @include medium() {
+        padding: 15px;
+      }
     }
   
     &__body {
       max-height: calc(100vh - 350px);
       overflow-y: scroll;
+
+      @include x-large() {
+        max-height: calc(100vh - 650px);
+      }
     }
   
     &__heading {
@@ -37,6 +46,10 @@
       &:hover {
         color: $white;
         background-color: $green;
+      }
+
+      &.-result {
+        cursor: pointer;
       }
     }
   }

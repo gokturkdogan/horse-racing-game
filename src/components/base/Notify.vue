@@ -26,11 +26,20 @@ export default {
   
 <style lang="scss" scoped>
 .notify {
-  position: absolute;
+  position: fixed;
   right: 100px;
   top: 100px;
   background-color: $white;
   padding: 20px 100px;
+  z-index: 100;
+
+  @include medium() {
+    flex-direction: column;
+    right: 20px;
+    top: 20px;
+    padding: 20px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  }
 
   &.success {
     color: $green;

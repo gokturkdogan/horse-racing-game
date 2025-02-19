@@ -1,13 +1,29 @@
+@use '../../mixins/media-queries' as *;
+
+
 .dashboard {
     height: 100%;
     padding: 100px;
     display: flex;
     justify-content: space-between;
     gap: 30px;
+    
+    @include xx-large() {
+        padding: 100px 10px;
+    }
+
+    @include medium() {
+        padding: 10px;
+        flex-direction: column;
+    }
 
     &__schedule {
         gap: 10px;
         display: flex;
         flex: 2;
+
+        @include x-large() {
+            flex-direction: column;
+        }
     }
 }
